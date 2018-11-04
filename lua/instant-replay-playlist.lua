@@ -78,8 +78,8 @@ function try_play()
 			-- the source will play whenever its scene is activated
 			obs.obs_source_update(source, settings)
 
-			obs.obs_data_release(settings)
-			obs.obs_source_release(source)
+			-- obs.obs_data_release(settings)
+			-- obs.obs_source_release(source)
 
 			obs.timer_add(clear_instant, replaylength*1000)
 

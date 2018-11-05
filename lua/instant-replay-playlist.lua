@@ -78,6 +78,8 @@ function try_play()
 			-- the source will play whenever its scene is activated
 			obs.obs_source_update(source, settings)
 
+      -- Comment out the below to avoid a crash on exit with no replays.
+      obs.script_log(obs.LOG_INFO, "In the try_play to path to source. About to release!")
 			-- obs.obs_data_release(settings)
 			-- obs.obs_source_release(source)
 
@@ -98,11 +100,11 @@ function try_play()
 					obs.obs_data_set_string(settings, "playback_behavior", stop_restart)
 
 					obs.obs_source_update(source, settings)
-
-					obs.obs_data_release(item)
-					obs.obs_data_array_release(playlist)
-					obs.obs_data_release(settings)
-					obs.obs_source_release(source)
+          obs.script_log(obs.LOG_INFO, "In the try_play to path to source to addall to source. About to release!")
+					-- obs.obs_data_release(item)
+					-- obs.obs_data_array_release(playlist)
+					-- obs.obs_data_release(settings)
+					-- obs.obs_source_release(source)
 				end
 			end
 		end
@@ -134,8 +136,8 @@ function instant_replay(pressed)
 		else
 			obs.script_log(obs.LOG_WARNING, "Tried to save an instant replay, but the replay buffer is not active!")
 		end
-
-		obs.obs_output_release(replay_buffer)
+    obs.script_log(obs.LOG_INFO, "In the instant_replay to replay_buffer. About to release!")
+		-- obs.obs_output_release(replay_buffer)
 	else
 		obs.script_log(obs.LOG_WARNING, "Tried to save an instant replay, but found no active replay buffer!")
 	end
@@ -149,8 +151,9 @@ function clear_instant()
 	obs.obs_data_set_bool(settings, "close_when_inactive", true)
 	obs.obs_data_set_bool(settings, "restart_on_activate", true)
 	obs.obs_source_update(source, settings)
-	obs.obs_data_release(settings)
-	obs.obs_source_release(source)
+  obs.script_log(obs.LOG_INFO, "In the clear_instant function. About to release!")
+	-- obs.obs_data_release(settings)
+	-- obs.obs_source_release(source)
 	obs.remove_current_callback()
 end
 
@@ -180,11 +183,11 @@ function try_add()
 			obs.obs_data_set_string(settings, "playback_behavior", stop_restart)
 
 			obs.obs_source_update(source, settings)
-
-			obs.obs_data_release(item)
-			obs.obs_data_array_release(playlist)
-			obs.obs_data_release(settings)
-			obs.obs_source_release(source)
+      obs.script_log(obs.LOG_INFO, "In the try_add to path to source. About to release!")
+			-- obs.obs_data_release(item)
+			-- obs.obs_data_array_release(playlist)
+			-- obs.obs_data_release(settings)
+			-- obs.obs_source_release(source)
 		end
 
 		obs.remove_current_callback()
@@ -214,8 +217,8 @@ function add_replay(pressed)
 		else
 			obs.script_log(obs.LOG_WARNING, "Tried to save an instant replay, but the replay buffer is not active!")
 		end
-
-		obs.obs_output_release(replay_buffer)
+    obs.script_log(obs.LOG_INFO, "In the add_replay function. About to release!")
+		-- obs.obs_output_release(replay_buffer)
 	else
 		obs.script_log(obs.LOG_WARNING, "Tried to save an instant replay, but found no active replay buffer!")
 	end
@@ -236,9 +239,11 @@ function clear_playlist(pressed)
 		obs.obs_data_set_bool(settings, "shuffle", false)
 		obs.obs_data_set_string(settings, "playback_behavior", stop_restart)
 		obs.obs_source_update(source, settings)
-		obs.obs_data_array_release(playlist)
-		obs.obs_data_release(settings)
-		obs.obs_source_release(source)
+    
+    obs.script_log(obs.LOG_INFO, "In the clear_playlist to source. About to release!")
+		-- obs.obs_data_array_release(playlist)
+		-- obs.obs_data_release(settings)
+		-- obs.obs_source_release(source)
 	end
 end
 
@@ -277,7 +282,7 @@ end
 -- A function named script_description returns the description shown to
 -- the user
 function script_description()
-	return "When the \"Instant Replay\" hotkey is triggered, saves a replay with the replay buffer, and then plays it in a media source as soon as the replay is ready. Requires an active replay buffer. When the \"Add Replay\" hotkey is triggered, saves a replay with the replay buffer and adds it to the VLC source playlist. All the accumulated replays can then be played back by transitioning to the replay scene. The playlist can be cleared with the \"Clear playlist\" hotkey or automatically when leaving the scene with the replay playlist.\n\nEdited by Dregu from the awesome Instant Replay by Jim"
+	return "When the \"Instant Replay\" hotkey is triggered, saves a replay with the replay buffer, and then plays it in a media source as soon as the replay is ready. Requires an active replay buffer. When the \"Add Replay\" hotkey is triggered, saves a replay with the replay buffer and adds it to the VLC source playlist. All the accumulated replays can then be played back by transitioning to the replay scene. The playlist can be cleared with the \"Clear playlist\" hotkey or automatically when leaving the scene with the replay playlist.\n\nEdited by Dregu (with bugfixes for OBS Studio 21 by c3r1c3) from the awesome Instant Replay by Jim"
 end
 
 -- A function named script_properties defines the properties that the user
@@ -322,8 +327,9 @@ function script_properties()
 	obs.obs_properties_add_bool(props, "addall", "Add instant replays also to VLC playlist")
 	obs.obs_properties_add_int(props, "replaylength", "Replay length (seconds)", 5, 21600, 1)
 
-	obs.source_list_release(scenes)
-	obs.source_list_release(sources)
+  obs.script_log(obs.LOG_INFO, "In the script_properties function. About to release!")
+	-- obs.source_list_release(scenes)
+	-- obs.source_list_release(sources)
 	return props
 end
 
@@ -332,17 +338,20 @@ function script_load(settings)
 	instant_hotkey_id = obs.obs_hotkey_register_frontend("instant_replay.trigger", "Instant Replay", instant_replay)
 	local instant_hotkey_save_array = obs.obs_data_get_array(settings, "instant_replay.trigger")
 	obs.obs_hotkey_load(instant_hotkey_id, instant_hotkey_save_array)
-	obs.obs_data_array_release(instant_hotkey_save_array)
+  obs.script_log(obs.LOG_INFO, "In the script_load function. About to release!")
+	-- obs.obs_data_array_release(instant_hotkey_save_array)
 
 	add_hotkey_id = obs.obs_hotkey_register_frontend("add_replay.trigger", "Add replay to playlist", add_replay)
 	local add_hotkey_save_array = obs.obs_data_get_array(settings, "add_replay.trigger")
 	obs.obs_hotkey_load(add_hotkey_id, add_hotkey_save_array)
-	obs.obs_data_array_release(add_hotkey_save_array)
+  obs.script_log(obs.LOG_INFO, "In the script_load function. About to release!")
+	-- obs.obs_data_array_release(add_hotkey_save_array)
 
 	clear_hotkey_id = obs.obs_hotkey_register_frontend("clear_playlist.trigger", "Clear replay playlist", clear_playlist)
 	local clear_hotkey_save_array = obs.obs_data_get_array(settings, "clear_playlist.trigger")
 	obs.obs_hotkey_load(clear_hotkey_id, clear_hotkey_save_array)
-	obs.obs_data_array_release(clear_hotkey_save_array)
+  obs.script_log(obs.LOG_INFO, "In the script_load function. About to release!")
+	--obs.obs_data_array_release(clear_hotkey_save_array)
 
 	if autoclear then
 		obs.obs_frontend_add_event_callback(frontend_event)
@@ -357,13 +366,16 @@ end
 function script_save(settings)
 	local instant_hotkey_save_array = obs.obs_hotkey_save(instant_hotkey_id)
 	obs.obs_data_set_array(settings, "instant_replay.trigger", instant_hotkey_save_array)
+  obs.script_log(obs.LOG_INFO, "In the script_save function. About to release!")
 	obs.obs_data_array_release(instant_hotkey_save_array)
 
 	local add_hotkey_save_array = obs.obs_hotkey_save(add_hotkey_id)
 	obs.obs_data_set_array(settings, "add_replay.trigger", add_hotkey_save_array)
+  obs.script_log(obs.LOG_INFO, "In the script_save function. About to release!")
 	obs.obs_data_array_release(add_hotkey_save_array)
 
 	local clear_hotkey_save_array = obs.obs_hotkey_save(clear_hotkey_id)
 	obs.obs_data_set_array(settings, "clear_playlist.trigger", clear_hotkey_save_array)
+  obs.script_log(obs.LOG_INFO, "In the script_save function. About to release!")
 	obs.obs_data_array_release(clear_hotkey_save_array)
 end

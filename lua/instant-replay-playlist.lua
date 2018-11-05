@@ -379,3 +379,15 @@ function script_save(settings)
   obs.script_log(obs.LOG_INFO, "In the script_save function. About to release!")
 	obs.obs_data_array_release(clear_hotkey_save_array)
 end
+
+-- A function named script_unload will be called when the script is deleted/OBS is closed
+function script_unload()
+  obs.script_log(obs.LOG_INFO, "In the script_unload function. About to release!")
+  obs.obs_output_release(replay_buffer)
+  obs.obs_data_release(item)
+  obs.obs_data_array_release(playlist)
+  obs.obs_data_release(settings)
+  obs.obs_source_release(source)
+  obs.source_list_release(scenes)
+	obs.source_list_release(sources)
+  end
